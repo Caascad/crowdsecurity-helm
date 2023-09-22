@@ -1,0 +1,32 @@
+{{ if and (.Values.tls.enabled) (.Values.tls.certManager.enabled) }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: crowdsec-ca-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+
+{{ if and (.Values.tls.lapi.serviceAccount) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-ca
+  namespace: crowdsecurity
+subjects:
+{{- range .Values.tls.lapi.serviceAccount }}
+- kind: ServiceAccount
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+{{- end }}
+roleRef:
+  kind: ClusterRole
+  name: crowdsec-ca-reader
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}
+
+{{ end }}

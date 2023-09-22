@@ -100,6 +100,12 @@ tls:
       namespaces: []
   lapi:
     secret: "{{ .Release.Name }}-lapi-tls"
+    # Bidouille pour permettre à d’autres pods de récupéré le cert
+    #
+    # serviceAccount:
+    #   - name: ingress-nginx-v2-bastion
+    #     namespace: ingress-nginx-v2-bastion
+    serviceAccount: []
 
 # If you want to specify secrets that will be used for all your crowdsec-agents
 # secrets can be provided as env variables
